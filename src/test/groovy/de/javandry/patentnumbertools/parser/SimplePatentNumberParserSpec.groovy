@@ -1,7 +1,6 @@
 package de.javandry.patentnumbertools.parser
 
 import de.javandry.patentnumbertools.PatentNumber
-import de.javandry.patentnumbertools.parser.SimplePatentNumberParser
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -43,8 +42,9 @@ class SimplePatentNumberParserSpec extends Specification {
 
         where:
         format      | input
-        "ccnnnnnkd" | "EP1234A1"
-        "ccnnnnnkd" | "EP123456A1"
-        "ccnnnnnkd" | "12345678A1"
+        "ccnnnnnkd" | "EP1234A1"   // serial: too few digits
+        "ccnnnnnkd" | "EP123456A1" // serial: too much digits
+        "ccnnnnnkd" | "12345678A1" // no country code
+        "ccnnnnnkd" | "E123456A1"  // country code just one character
     }
 }
