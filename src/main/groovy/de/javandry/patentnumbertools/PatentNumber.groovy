@@ -14,8 +14,10 @@ class PatentNumber {
     }
 
     PatentNumber(String countryCode, String serial, String kindCode) {
-        this.countryCode = countryCode
-        this.serial = serial
-        this.kindCode = kindCode
+        this(countryCode, null, serial, kindCode)
+    }
+
+    PatentNumber(String countryCode, String serial) {
+        this(countryCode, null, serial, null)
     }
 }
