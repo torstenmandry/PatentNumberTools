@@ -5,7 +5,11 @@ import de.javandry.patentnumbertools.PatentNumber
 import java.util.regex.Pattern
 
 /**
- * Simple PatentNumberParser that parses patent numbers based on a pattern string like "ccnnnnnkd".<br/>
+ * PatentNumberParser that parses patent numbers based on a pattern string like "ccnnnnnkd".<br/>
+ * <br/>
+ * Example<br/>
+ * <code>new PatternBasedPatentNumberParser("ccnnnnnkd").parse("EP12345A1")</code><br/>
+ * <br/>
  * Use the following characters to define the pattern string:<br/>
  * <ul>
  *     <li>"cc" two character country code (mandatory)</li>
