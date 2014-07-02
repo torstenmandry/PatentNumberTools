@@ -4,12 +4,12 @@ import de.javandry.patentnumbertools.PatentNumber
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class SimplePatentNumberParserSpec extends Specification {
+class PatternBasedPatentNumberParserSpec extends Specification {
 
-    @Unroll("parse '#input' with format string '#format'")
-    def "parse"() {
+    @Unroll
+    def "parse '#input' with pattern '#pattern'"() {
         given:
-        SimplePatentNumberParser parser = new SimplePatentNumberParser(format);
+        PatternBasedPatentNumberParser parser = new PatternBasedPatentNumberParser(pattern);
 
         when:
         PatentNumber patentNumber = parser.parse(input)
@@ -20,7 +20,7 @@ class SimplePatentNumberParserSpec extends Specification {
         patentNumber.kindCode == kindCode
 
         where:
-        format           | input            | countryCode | year   | serial    | kindCode
+        pattern           | input            | countryCode | year   | serial    | kindCode
         "ccnnnnnkd"      | "EP12345A1"      | "EP"        | null   | "12345"   | "A1"
         "ccnnnnnkd"      | "EP12345A"       | "EP"        | null   | "12345"   | "A"
         "ccnnnnnkd"      | "EP12345"        | "EP"        | null   | "12345"   | null
@@ -30,9 +30,9 @@ class SimplePatentNumberParserSpec extends Specification {
     }
 
     @Unroll
-    def "detect that '#input' does not match format '#format'"() {
+    def "detect that '#input' does not match pattern '#pattern'"() {
         given:
-        SimplePatentNumberParser parser = new SimplePatentNumberParser(format);
+        PatternBasedPatentNumberParser parser = new PatternBasedPatentNumberParser(pattern);
 
         when:
         parser.parse(input)
@@ -41,7 +41,7 @@ class SimplePatentNumberParserSpec extends Specification {
         thrown(IllegalArgumentException)
 
         where:
-        format      | input
+        pattern      | input
         "ccnnnnnkd" | "EP1234A1"   // serial: too few digits
         "ccnnnnnkd" | "EP123456A1" // serial: too much digits
         "ccnnnnnkd" | "12345678A1" // no country code

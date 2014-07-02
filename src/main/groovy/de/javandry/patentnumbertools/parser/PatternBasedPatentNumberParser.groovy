@@ -3,8 +3,8 @@ package de.javandry.patentnumbertools.parser
 import de.javandry.patentnumbertools.PatentNumber
 
 /**
- * Simple PatentNumberParser that parses patent numbers based on a simple format string like "ccnnnnnkd".<br/>
- * Use the following characters to define the format string:<br/>
+ * Simple PatentNumberParser that parses patent numbers based on a pattern string like "ccnnnnnkd".<br/>
+ * Use the following characters to define the pattern string:<br/>
  * <ul>
  *     <li>"cc" two character country code (mandatory)</li>
  *     <li>"yy" or "yyyy" two or four digit year (mandatory)</li>
@@ -13,14 +13,14 @@ import de.javandry.patentnumbertools.PatentNumber
  * </ul>
  * @author torsten.mandry@opitz-consulting.com
  */
-class SimplePatentNumberParser {
+class PatternBasedPatentNumberParser {
 
-    private static final String FORMAT_COUNTRY_CODE = "cc"
-    private static final String FORMAT_NUMBER_DIGIT = "n"
-    private static final String FORMAT_KIND_CODE = "kd"
-    private static final String FORMAT_YEAR_DIGIT = "y"
-    private static final String FORMAT_YEAR_2_DIGITS = "yy"
-    private static final String FORMAT_YEAR_4_DIGITS = "yyyy"
+    private static final String PATTERN_COUNTRY_CODE = "cc"
+    private static final String PATTERN_NUMBER_DIGIT = "n"
+    private static final String PATTERN_KIND_CODE = "kd"
+    private static final String PATTERN_YEAR_DIGIT = "y"
+    private static final String PATTERN_YEAR_2_DIGITS = "yy"
+    private static final String PATTERN_YEAR_4_DIGITS = "yyyy"
 
     private static final String REGEXP_DIGIT = "\\\\d"
     public static final String REGEXP_ALPHA = "[a-zA-Z]"
@@ -30,17 +30,17 @@ class SimplePatentNumberParser {
     public static final String REGEXP_YEAR_4_DIGITS = REGEXP_DIGIT + "{4}"
     public static final String REGEXP_YEAR_2_DIGITS = REGEXP_DIGIT + "{2}"
 
-    private String formatString
-    private String formatRegExp
+    private String patternString
+    private String patternRegExp
 
-    SimplePatentNumberParser(String formatString) {
-        this.formatString = formatString
-        this.formatRegExp = "^${formatString}\$"
-                .replaceAll(FORMAT_COUNTRY_CODE, REGEXP_COUNTRY_CODE)
-                .replaceAll(FORMAT_YEAR_4_DIGITS, REGEXP_YEAR_4_DIGITS)
-                .replaceAll(FORMAT_YEAR_2_DIGITS, REGEXP_YEAR_2_DIGITS)
-                .replaceAll(FORMAT_NUMBER_DIGIT, REGEXP_DIGIT)
-                .replaceAll(FORMAT_KIND_CODE, REGEXP_KIND_CODE)
+    PatternBasedPatentNumberParser(String patternString) {
+        this.patternString = patternString
+        this.patternRegExp = "^${patternString}\$"
+                .replaceAll(PATTERN_COUNTRY_CODE, REGEXP_COUNTRY_CODE)
+                .replaceAll(PATTERN_YEAR_4_DIGITS, REGEXP_YEAR_4_DIGITS)
+                .replaceAll(PATTERN_YEAR_2_DIGITS, REGEXP_YEAR_2_DIGITS)
+                .replaceAll(PATTERN_NUMBER_DIGIT, REGEXP_DIGIT)
+                .replaceAll(PATTERN_KIND_CODE, REGEXP_KIND_CODE)
     }
 
     PatentNumber parse(String numberString) {
@@ -55,21 +55,21 @@ class SimplePatentNumberParser {
     }
 
     private void validateFormat(String numberString) {
-        if (numberString.matches(formatRegExp))
+        if (numberString.matches(patternRegExp))
             return
 
-        System.err.println("input '" +  numberString + "' does not match format '" + formatString + "' (regular expression '" + formatRegExp + "'")
-        throw new IllegalArgumentException("'" + numberString + "' does not match format '" + formatString + "'")
+        System.err.println("input '" +  numberString + "' does not match pattern '" + patternString + "' (regular expression '" + patternRegExp + "'")
+        throw new IllegalArgumentException("'" + numberString + "' does not match pattern '" + patternString + "'")
     }
 
     private String extractYear(String numberString) {
-        int yearStartIndex = formatString.indexOf(FORMAT_YEAR_2_DIGITS)
+        int yearStartIndex = patternString.indexOf(PATTERN_YEAR_2_DIGITS)
 
         if (yearStartIndex < 0) {
             return null
         }
 
-        int yearEndIndex = formatString.lastIndexOf(FORMAT_YEAR_DIGIT)
+        int yearEndIndex = patternString.lastIndexOf(PATTERN_YEAR_DIGIT)
         String year = numberString.substring(yearStartIndex, yearEndIndex + 1)
 
         if (year.length() == 4)
@@ -83,19 +83,19 @@ class SimplePatentNumberParser {
     }
 
     private String extractCountryCode(String numberString) {
-        int countryCodeStartIndex = formatString.indexOf(FORMAT_COUNTRY_CODE)
+        int countryCodeStartIndex = patternString.indexOf(PATTERN_COUNTRY_CODE)
         def countryCode = numberString.substring(countryCodeStartIndex, countryCodeStartIndex + 2)
         countryCode
     }
 
     private String extractSerial(String numberString) {
-        int numberPartStartIndex = formatString.indexOf(FORMAT_NUMBER_DIGIT);
-        int numberPartEndIndex = formatString.lastIndexOf(FORMAT_NUMBER_DIGIT)
+        int numberPartStartIndex = patternString.indexOf(PATTERN_NUMBER_DIGIT);
+        int numberPartEndIndex = patternString.lastIndexOf(PATTERN_NUMBER_DIGIT)
         numberString.substring(numberPartStartIndex, numberPartEndIndex + 1)
     }
 
     private String extractKindCode(String numberString) {
-        int kindCodeStartIndex = formatString.indexOf(FORMAT_KIND_CODE)
+        int kindCodeStartIndex = patternString.indexOf(PATTERN_KIND_CODE)
         if (numberString.length() < kindCodeStartIndex + 1)
             return null
         numberString.substring(kindCodeStartIndex)
